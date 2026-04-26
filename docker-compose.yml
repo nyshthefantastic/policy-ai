@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: policyops-postgres
+    environment:
+      POSTGRES_USER: policyops
+      POSTGRES_PASSWORD: policyops
+      POSTGRES_DB: policyops
+    ports:
+      - "5432:5432"
+    volumes:
+      - policyops_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U policyops -d policyops"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    container_name: policyops-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - policyops_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  policyops_pgdata:
+  policyops_redisdata:
